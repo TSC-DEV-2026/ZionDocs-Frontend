@@ -237,6 +237,8 @@ export function UserProvider({ children }: UserProviderProps) {
             typeof raw?.senha_trocada === "boolean" ? raw.senha_trocada : null,
         };
 
+        console.log("user.interno =", normalized.interno);
+
         assignUserIfChanged(normalized);
         setIsAuthenticatedSafe(true);
 
