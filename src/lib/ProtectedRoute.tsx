@@ -3,14 +3,7 @@ import { useUser } from "@/contexts/UserContext";
 import LoadingScreen from "@/components/ui/loadingScreen";
 
 export function ProtectedRoute() {
-  const {
-    isAuthenticated,
-    isLoading,
-    mustChangePassword,
-    mustValidateInternalToken,
-    internalTokenPromptedInSession,
-    setInternalTokenPromptedInSession,
-  } = useUser();
+  const { isAuthenticated, isLoading, mustChangePassword } = useUser();
 
   if (isLoading) return <LoadingScreen />;
 
@@ -18,12 +11,6 @@ export function ProtectedRoute() {
 
   if (mustChangePassword) {
     return <Navigate to="/trocar-senha" replace />;
-  }
-
-  // ✅ Só "empurra" para /token UMA VEZ por sessão
-  if (mustValidateInternalToken && !internalTokenPromptedInSession) {
-    setInternalTokenPromptedInSession(true);
-    return <Navigate to="/token" replace />;
   }
 
   return <Outlet />;

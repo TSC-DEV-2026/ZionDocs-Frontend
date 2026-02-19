@@ -4,13 +4,7 @@ import LoadingScreen from "@/components/ui/loadingScreen";
 import Home from "@/pages/home/Home";
 
 export default function HomeGate() {
-  const {
-    isLoading,
-    isAuthenticated,
-    mustChangePassword,
-    mustValidateInternalToken,
-    internalTokenPromptedInSession,
-  } = useUser();
+  const { isLoading, isAuthenticated, mustChangePassword } = useUser();
 
   if (isLoading) return <LoadingScreen />;
 
@@ -18,11 +12,6 @@ export default function HomeGate() {
 
   if (mustChangePassword) {
     return <Navigate to="/trocar-senha" replace />;
-  }
-
-  // ✅ Só redireciona para /token se ainda não "promptou" nesta sessão
-  if (mustValidateInternalToken && !internalTokenPromptedInSession) {
-    return <Navigate to="/token" replace />;
   }
 
   return <Home />;

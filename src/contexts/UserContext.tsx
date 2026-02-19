@@ -81,7 +81,6 @@ const BACKGROUND_REFRESH_MS = Number(
   import.meta.env.VITE_AUTH_BACKGROUND_REFRESH_MS ?? 10 * 60 * 1000,
 );
 
-// ✅ chaves separadas corretamente
 const INTERNAL_TOKEN_VALIDATED_SESSION_KEY = "auth:internal_token_validated";
 const INTERNAL_TOKEN_BLOCKED_SESSION_KEY = "auth:internal_token_blocked";
 const INTERNAL_TOKEN_PROMPTED_SESSION_KEY = "auth:internal_token_prompted";
@@ -133,7 +132,6 @@ export function UserProvider({ children }: UserProviderProps) {
   const [internalTokenValidated, setInternalTokenValidatedState] =
     useState(false);
 
-  // ✅ agora lê da chave correta (blocked)
   const [internalTokenBlockedInSession, setInternalTokenBlockedInSessionState] =
     useState(readSessionBool(INTERNAL_TOKEN_BLOCKED_SESSION_KEY));
 
@@ -179,7 +177,6 @@ export function UserProvider({ children }: UserProviderProps) {
 
   const setInternalTokenValidated = (v: boolean) => {
     setInternalTokenValidatedState(v);
-    // opcional: persistir validated (se você quiser)
     writeSessionBool(INTERNAL_TOKEN_VALIDATED_SESSION_KEY, v);
   };
 
