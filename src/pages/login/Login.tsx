@@ -65,7 +65,6 @@ function is5xx(status?: number) {
   return typeof status === "number" && status >= 500 && status <= 599;
 }
 
-// mesma chave usada no UserContext
 const INTERNAL_TOKEN_PROMPTED_SESSION_KEY = "auth:internal_token_prompted";
 
 function writeSessionBool(key: string, v: boolean) {
@@ -119,17 +118,14 @@ export default function LoginPage() {
   const loginWithRetryOn5xx = async (data: FormData) => {
     try {
       await api.post("/user/login", data, { withCredentials: true });
-      console.log("login bem-sucedido");
       return;
     } catch (err1: any) {
       const status1 = getStatus(err1);
 
       if (err1?.message === "Network Error") throw err1;
-
       if (!is5xx(status1)) throw err1;
 
       await sleep(500);
-
       await api.post("/user/login", data, { withCredentials: true });
     }
   };
@@ -144,17 +140,23 @@ export default function LoginPage() {
 
       await loginWithRetryOn5xx(data);
 
-      const u = await refreshUser();
+      // ✅ determinístico: pega /user/me direto daqui
+      const meRes = await api.get("/user/me");
+      const me = meRes.data as any;
 
-      if (u?.senha_trocada !== true) {
+      console.log("ME no login:", me);
+      console.log("ME.interno:", me?.interno, "ME.senha_trocada:", me?.senha_trocada);
+
+      // mantém o contexto sincronizado (não usamos retorno pra decidir)
+      refreshUser().catch(() => {});
+
+      if (me?.senha_trocada !== true) {
         navigate("/trocar-senha", { replace: true });
         return;
       }
 
-      if (u?.interno === true) {
-        // ✅ garante que já foi direcionado para /token nesta sessão
+      if (me?.interno === true) {
         writeSessionBool(INTERNAL_TOKEN_PROMPTED_SESSION_KEY, true);
-
         navigate("/token", { replace: true });
         return;
       }
@@ -162,9 +164,7 @@ export default function LoginPage() {
       navigate("/", { replace: true });
     } catch (err: any) {
       if (err?.message === "Network Error") {
-        setLoginError(
-          "Não foi possível conectar ao servidor. Verifique sua conexão.",
-        );
+        setLoginError("Não foi possível conectar ao servidor. Verifique sua conexão.");
       } else {
         setLoginError(err?.response?.data?.detail || "Erro ao realizar login");
       }
