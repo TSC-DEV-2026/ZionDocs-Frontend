@@ -65,6 +65,17 @@ function is5xx(status?: number) {
   return typeof status === "number" && status >= 500 && status <= 599;
 }
 
+// mesma chave usada no UserContext
+const INTERNAL_TOKEN_PROMPTED_SESSION_KEY = "auth:internal_token_prompted";
+
+function writeSessionBool(key: string, v: boolean) {
+  try {
+    sessionStorage.setItem(key, v ? "true" : "false");
+  } catch {
+    // ignore
+  }
+}
+
 export default function LoginPage() {
   const {
     register,
@@ -105,11 +116,10 @@ export default function LoginPage() {
     }
   }, [setValue]);
 
-  // ✅ Login com retry automático SOMENTE para erro 5xx
   const loginWithRetryOn5xx = async (data: FormData) => {
     try {
       await api.post("/user/login", data, { withCredentials: true });
-      console.log("login bem-sucedido")
+      console.log("login bem-sucedido");
       return;
     } catch (err1: any) {
       const status1 = getStatus(err1);
@@ -136,13 +146,15 @@ export default function LoginPage() {
 
       const u = await refreshUser();
 
-      // ✅ regra de navegação (sempre determinística)
       if (u?.senha_trocada !== true) {
         navigate("/trocar-senha", { replace: true });
         return;
       }
 
       if (u?.interno === true) {
+        // ✅ garante que já foi direcionado para /token nesta sessão
+        writeSessionBool(INTERNAL_TOKEN_PROMPTED_SESSION_KEY, true);
+
         navigate("/token", { replace: true });
         return;
       }
@@ -150,7 +162,9 @@ export default function LoginPage() {
       navigate("/", { replace: true });
     } catch (err: any) {
       if (err?.message === "Network Error") {
-        setLoginError("Não foi possível conectar ao servidor. Verifique sua conexão.");
+        setLoginError(
+          "Não foi possível conectar ao servidor. Verifique sua conexão.",
+        );
       } else {
         setLoginError(err?.response?.data?.detail || "Erro ao realizar login");
       }
