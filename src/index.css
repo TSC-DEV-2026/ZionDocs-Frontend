@@ -10,9 +10,9 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: dark;
-  color: #f3f3f3;
-  background-color: #0e3616;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -27,94 +27,122 @@ html, body {
   padding: 0;
 }
 
-*, 
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-/* Melhor scroll no mobile */
-body {
-  min-height: 100vh;
-  -webkit-overflow-scrolling: touch;
+*, *::before, *::after {
+  box-sizing: inherit;
 }
 
 /* ============================
-   🎨 THEME TOKENS (shadcn)
+   🔗 LINKS
+============================ */
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+/* ============================
+   🎨 TEXTOS & COMPONENTES BÁSICOS
+============================ */
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* ============================
+   🌓 TEMA CLARO
+============================ */
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* ============================
+   🎨 VARIÁVEIS DE TEMA VIA TAILWIND
 ============================ */
 @layer base {
   :root {
-    --background: 140 55% 13%;
-    --foreground: 120 12% 95%;
-
-    --card: 140 55% 13%;
-    --card-foreground: 120 12% 95%;
-
-    --popover: 140 55% 13%;
-    --popover-foreground: 120 12% 95%;
-
-    --primary: 142 52% 35%;
-    --primary-foreground: 120 12% 95%;
-
-    --secondary: 141 41% 30%;
-    --secondary-foreground: 120 12% 95%;
-
-    --muted: 141 41% 30%;
-    --muted-foreground: 120 8% 70%;
-
-    --accent: 141 41% 30%;
-    --accent-foreground: 120 12% 95%;
-
-    --destructive: 142 52% 35%;
-    --destructive-foreground: 120 12% 95%;
-
-    --border: 141 41% 30%;
-    --input: 141 41% 30%;
-    --ring: 142 52% 35%;
-
-    --chart-1: 142 52% 35%;
-    --chart-2: 141 41% 30%;
-    --chart-3: 140 55% 13%;
-    --chart-4: 120 8% 70%;
-    --chart-5: 120 12% 95%;
-
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 140 55% 13%;
-    --foreground: 120 12% 95%;
-
-    --card: 140 55% 13%;
-    --card-foreground: 120 12% 95%;
-
-    --popover: 140 55% 13%;
-    --popover-foreground: 120 12% 95%;
-
-    --primary: 142 52% 35%;
-    --primary-foreground: 120 12% 95%;
-
-    --secondary: 141 41% 30%;
-    --secondary-foreground: 120 12% 95%;
-
-    --muted: 141 41% 30%;
-    --muted-foreground: 120 8% 70%;
-
-    --accent: 141 41% 30%;
-    --accent-foreground: 120 12% 95%;
-
-    --destructive: 142 52% 35%;
-    --destructive-foreground: 120 12% 95%;
-
-    --border: 141 41% 30%;
-    --input: 141 41% 30%;
-    --ring: 142 52% 35%;
-
-    --chart-1: 142 52% 35%;
-    --chart-2: 141 41% 30%;
-    --chart-3: 140 55% 13%;
-    --chart-4: 120 8% 70%;
-    --chart-5: 120 12% 95%;
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 
   * {
@@ -127,22 +155,30 @@ body {
 }
 
 /* ============================
-   🔧 UTILITÁRIOS BÁSICOS
+   ✨ UTILITÁRIOS PERSONALIZADOS
 ============================ */
-a {
-  color: #44F01F;
-  text-decoration: none;
-}
+@layer utilities {
+  .hover\:shadow-xl:hover {
+    --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+      0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color),
+      0 8px 10px -6px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+      var(--tw-ring-shadow, 0 0 #0000),
+      var(--tw-shadow);
+  }
 
-a:hover {
-  color: #2ECC4A;
-  text-decoration: underline;
-}
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
 
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 4px rgb(0 0 0 / 0.1);
+  .hover\:translate-x-1:hover {
+    --tw-translate-x: 0.25rem;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+      rotate(var(--tw-rotate)) skewX(var(--tw-skew-x))
+      skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x))
+      scaleY(var(--tw-scale-y));
+  }
 }
