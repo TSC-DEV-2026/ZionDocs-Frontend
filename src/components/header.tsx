@@ -62,7 +62,7 @@ export default function Header() {
         </Link>
 
         {/* NAV DESKTOP */}
-        <nav className="hidden md:flex space-x-4 pl-10">
+        <nav className="hidden md:flex space-x-4">
           <Link
             to="/"
             className="flex items-center hover:text-[#31d5db] transition-colors text-cyan-50 ml-10"
