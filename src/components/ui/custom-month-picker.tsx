@@ -1,15 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar, ChevronDown } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Calendar, ChevronDown } from "lucide-react";
 
 interface CustomMonthPickerProps {
-  value: string
-  onChange: (value: string) => void
-  placeholder?: string
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
 }
 
 export default function CustomMonthPicker({
@@ -17,13 +23,12 @@ export default function CustomMonthPicker({
   onChange,
   placeholder = "Selecionar período",
 }: CustomMonthPickerProps) {
-  const [open, setOpen] = useState(false)
-  const [selectedYear, setSelectedYear] = useState(value ? value.split("-")[0] : "")
-  const [selectedMonth, setSelectedMonth] = useState(value ? value.split("-")[1] : "")
+  const [open, setOpen] = useState(false);
+  const [selectedYear, setSelectedYear] = useState(value ? value.split("-")[0] : "");
+  const [selectedMonth, setSelectedMonth] = useState(value ? value.split("-")[1] : "");
 
-  // Gerar anos (últimos 10 anos)
-  const currentYear = new Date().getFullYear()
-  const years = Array.from({ length: 11 }, (_, i) => currentYear - i)
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 11 }, (_, i) => currentYear - i);
 
   const months = [
     { value: "01", label: "Janeiro" },
@@ -38,68 +43,74 @@ export default function CustomMonthPicker({
     { value: "10", label: "Outubro" },
     { value: "11", label: "Novembro" },
     { value: "12", label: "Dezembro" },
-  ]
+  ];
 
   const handleApply = () => {
     if (selectedYear && selectedMonth) {
-      onChange(`${selectedYear}-${selectedMonth}`)
-      setOpen(false)
+      onChange(`${selectedYear}-${selectedMonth}`);
+      setOpen(false);
     }
-  }
+  };
 
   const handleClear = () => {
-    setSelectedYear("")
-    setSelectedMonth("")
-    onChange("")
-    setOpen(false)
-  }
+    setSelectedYear("");
+    setSelectedMonth("");
+    onChange("");
+    setOpen(false);
+  };
 
   const getDisplayValue = () => {
-    if (!value) return placeholder
-    const [year, month] = value.split("-")
-    const monthName = months.find((m) => m.value === month)?.label
-    return `${monthName} ${year}`
-  }
+    if (!value) return placeholder;
+    const [year, month] = value.split("-");
+    const monthName = months.find((m) => m.value === month)?.label;
+    return `${monthName} ${year}`;
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="bg-[#2c2c40] text-white border-gray-600 hover:bg-[#3c3c50] hover:text-white justify-between w-full h-auto p-2.5"
+          className="w-full justify-between h-auto p-2.5
+            bg-white/80 text-[#0b2b14] border-[#cfe8d8]
+            hover:bg-white/90 hover:text-[#0b2b14]"
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <Calendar className="h-4 w-4 flex-shrink-0" />
-            <span className="truncate text-left text-sm">{getDisplayValue()}</span>
+            <Calendar className="h-4 w-4 flex-shrink-0 text-[#2f4f38]/80" />
+            <span className="truncate text-left text-sm text-[#0b2b14]">
+              {getDisplayValue()}
+            </span>
           </div>
-          <ChevronDown className="h-4 w-4 opacity-50 flex-shrink-0" />
+          <ChevronDown className="h-4 w-4 opacity-60 flex-shrink-0 text-[#2f4f38]" />
         </Button>
       </PopoverTrigger>
+
       <PopoverContent
-        className="w-[min(calc(100vw-2rem),320px)] bg-[#2c2c40] border-gray-600 p-4"
+        className="w-[min(calc(100vw-2rem),340px)] p-4
+          bg-white/90 backdrop-blur-md border-[#cfe8d8] text-[#0b2b14] rounded-xl shadow-lg"
         align="center"
-        sideOffset={5}
+        sideOffset={6}
         side="bottom"
-        avoidCollisions={true}
+        avoidCollisions
       >
         <div className="space-y-4">
-          <div className="text-sm font-medium text-white text-center">
-            Selecionar Período
+          <div className="text-sm font-semibold text-[#0b2b14] text-center">
+            Selecionar período
           </div>
-          
+
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <label className="text-xs text-gray-300">Ano</label>
+              <label className="text-xs text-[#2f4f38]/70">Ano</label>
               <Select value={selectedYear} onValueChange={setSelectedYear}>
-                <SelectTrigger className="bg-[#1e1e2f] border-gray-600 text-white h-10">
+                <SelectTrigger className="h-10 bg-white/85 border-[#cfe8d8] text-[#0b2b14]">
                   <SelectValue placeholder="Ano" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#2c2c40] border-gray-600 max-h-60">
+                <SelectContent className="bg-white border-[#cfe8d8] max-h-60">
                   {years.map((year) => (
                     <SelectItem
                       key={year}
                       value={year.toString()}
-                      className="text-white hover:bg-[#3c3c50] focus:bg-[#3c3c50]"
+                      className="text-[#0b2b14] focus:bg-[#e9f8ef]"
                     >
                       {year}
                     </SelectItem>
@@ -107,19 +118,19 @@ export default function CustomMonthPicker({
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
-              <label className="text-xs text-gray-300">Mês</label>
+              <label className="text-xs text-[#2f4f38]/70">Mês</label>
               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                <SelectTrigger className="bg-[#1e1e2f] border-gray-600 text-white h-10">
+                <SelectTrigger className="h-10 bg-white/85 border-[#cfe8d8] text-[#0b2b14]">
                   <SelectValue placeholder="Mês" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#2c2c40] border-gray-600 max-h-60">
+                <SelectContent className="bg-white border-[#cfe8d8] max-h-60">
                   {months.map((month) => (
                     <SelectItem
                       key={month.value}
                       value={month.value}
-                      className="text-white hover:bg-[#3c3c50] focus:bg-[#3c3c50]"
+                      className="text-[#0b2b14] focus:bg-[#e9f8ef]"
                     >
                       {month.label}
                     </SelectItem>
@@ -128,19 +139,23 @@ export default function CustomMonthPicker({
               </Select>
             </div>
           </div>
-          
+
           <div className="flex gap-2 pt-2">
             <Button
               onClick={handleApply}
               disabled={!selectedYear || !selectedMonth}
-              className="flex-1 bg-green-600 hover:bg-green-500 text-white disabled:bg-gray-600 disabled:cursor-not-allowed h-10"
+              className="flex-1 h-10 text-white
+                bg-gradient-to-r from-[#25601d] to-[#2fa146]
+                hover:opacity-95 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               Aplicar
             </Button>
+
             <Button
               onClick={handleClear}
               variant="outline"
-              className="flex-1 bg-transparent border-gray-600 text-white hover:bg-[#3c3c50] hover:text-white h-10"
+              className="flex-1 h-10 bg-white/70 border-[#cfe8d8] text-[#0b2b14]
+                hover:bg-[#e9f8ef] hover:text-[#0b2b14]"
             >
               Limpar
             </Button>
@@ -148,5 +163,5 @@ export default function CustomMonthPicker({
         </div>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

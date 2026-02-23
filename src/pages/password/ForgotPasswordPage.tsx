@@ -79,7 +79,7 @@ export default function ForceChangePasswordPage() {
 
       if (!senhaAtual) {
         setPageError(
-          "Por segurança, é necessário informar sua senha atual novamente. Faça login de novo."
+          "Por segurança, é necessário informar sua senha atual novamente. Faça login de novo.",
         );
         return;
       }
@@ -93,14 +93,9 @@ export default function ForceChangePasswordPage() {
       clearLoginPassword();
       setDone(true);
 
-      // ✅ Toast apenas quando deu certo
-      toast.success("Senha atualizada com sucesso.", {
-        duration: 2500,
-      });
-
+      toast.success("Senha atualizada com sucesso.", { duration: 2500 });
       setPageSuccess("Senha atualizada. Redirecionando...");
 
-      // ✅ NOVO: decide destino com base no user atualizado
       const u = await refreshUser();
 
       if ((u as any)?.interno === true) {
@@ -110,10 +105,14 @@ export default function ForceChangePasswordPage() {
       }
     } catch (err: any) {
       if (err?.message === "Network Error") {
-        setPageError("Não foi possível conectar ao servidor. Verifique sua conexão.");
+        setPageError(
+          "Não foi possível conectar ao servidor. Verifique sua conexão.",
+        );
       } else {
         setPageError(
-          err?.response?.data?.detail || err?.message || "Erro ao atualizar a senha"
+          err?.response?.data?.detail ||
+            err?.message ||
+            "Erro ao atualizar a senha",
         );
       }
     } finally {
@@ -124,33 +123,41 @@ export default function ForceChangePasswordPage() {
   const showYellowWarning = !done && !pageSuccess && !senhaAtual;
 
   return (
-    <div className="h-screen w-screen relative overflow-hidden flex items-center justify-center p-4 bg-[#0f172a] bg-gradient-to-br from-indigo-500 via-purple-600 to-green-300">
-      <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-[#1F52FF] via-[#7048e8] to-[#C263FF] opacity-30 blur-3xl -z-10" />
+    <div className="min-h-screen w-screen relative isolate overflow-hidden flex items-center justify-center p-4">
+      {/* FUNDO padrão do site (igual Login) */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#44F01F] via-[#2ECC4A] to-[#2B8B49]" />
 
       <Toaster richColors position="top-center" />
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-[#1e1e2f] text-white rounded-2xl shadow-[0_0_120px_rgba(0,0,0,0.6)] p-8 w-full max-w-sm space-y-6 border border-gray-700"
+        className={[
+          "relative z-10",
+          "w-full max-w-sm space-y-6 p-8 rounded-2xl",
+          "bg-white/85 backdrop-blur-md",
+          "shadow-[0_22px_70px_rgba(0,0,0,0.20)]",
+          "border border-[#d8efe0]",
+        ].join(" ")}
       >
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-center text-white">
+          <h2 className="text-2xl font-extrabold text-center text-[#0b2b14]">
             Troca de senha obrigatória
           </h2>
-          <p className="text-sm text-center text-gray-300">
+          <div className="h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#25601d] to-[#2fa146]" />
+          <p className="text-sm text-center text-[#2f4f38]/70">
             Por segurança, você precisa definir uma nova senha antes de continuar.
           </p>
         </div>
 
         {showYellowWarning && (
-          <div className="text-sm text-yellow-200 bg-yellow-900/20 border border-yellow-700 rounded-lg p-3">
+          <div className="text-sm text-[#7a4b00] bg-[#fff7db] border border-[#ffd07a] rounded-lg p-3">
             Sua sessão está autenticada, mas a senha atual não está disponível na
             memória. Para continuar, faça login novamente.
           </div>
         )}
 
         <div>
-          <Label htmlFor="novaSenha" className="text-gray-200">
+          <Label htmlFor="novaSenha" className="text-[#0b2b14]">
             Nova senha
           </Label>
           <div className="relative">
@@ -158,12 +165,18 @@ export default function ForceChangePasswordPage() {
               id="novaSenha"
               type={showNewPassword ? "text" : "password"}
               {...register("novaSenha")}
-              className="mt-1 pr-10 bg-[#2a2a3d] text-white"
+              className={[
+                "mt-1 pr-10",
+                "bg-white",
+                "border-[#cfe8d8] focus-visible:ring-0",
+                "focus:border-[#2fa146]",
+                "text-[#0b2b14] placeholder:text-[#2f4f38]/60",
+              ].join(" ")}
               autoComplete="new-password"
               disabled={!mustChangePassword || loading || done}
             />
             <div
-              className="absolute right-2 top-2 text-white cursor-pointer hover:text-blue-400"
+              className="absolute right-2 top-2 text-[#2f4f38] cursor-pointer hover:text-[#25601d]"
               onClick={() => setShowNewPassword((prev) => !prev)}
               role="button"
               aria-label="Alternar visualização da nova senha"
@@ -173,12 +186,12 @@ export default function ForceChangePasswordPage() {
             </div>
           </div>
           {errors.novaSenha && (
-            <p className="text-red-400 text-sm mt-1">{errors.novaSenha.message}</p>
+            <p className="text-red-600 text-sm mt-1">{errors.novaSenha.message}</p>
           )}
         </div>
 
         <div>
-          <Label htmlFor="confirmarSenha" className="text-gray-200">
+          <Label htmlFor="confirmarSenha" className="text-[#0b2b14]">
             Confirmar nova senha
           </Label>
           <div className="relative">
@@ -186,12 +199,18 @@ export default function ForceChangePasswordPage() {
               id="confirmarSenha"
               type={showConfirmPassword ? "text" : "password"}
               {...register("confirmarSenha")}
-              className="mt-1 pr-10 bg-[#2a2a3d] text-white"
+              className={[
+                "mt-1 pr-10",
+                "bg-white",
+                "border-[#cfe8d8] focus-visible:ring-0",
+                "focus:border-[#2fa146]",
+                "text-[#0b2b14] placeholder:text-[#2f4f38]/60",
+              ].join(" ")}
               autoComplete="new-password"
               disabled={!mustChangePassword || loading || done}
             />
             <div
-              className="absolute right-2 top-2 text-white cursor-pointer hover:text-blue-400"
+              className="absolute right-2 top-2 text-[#2f4f38] cursor-pointer hover:text-[#25601d]"
               onClick={() => setShowConfirmPassword((prev) => !prev)}
               role="button"
               aria-label="Alternar visualização da confirmação de senha"
@@ -201,23 +220,30 @@ export default function ForceChangePasswordPage() {
             </div>
           </div>
           {errors.confirmarSenha && (
-            <p className="text-red-400 text-sm mt-1">
+            <p className="text-red-600 text-sm mt-1">
               {errors.confirmarSenha.message}
             </p>
           )}
         </div>
 
-        {pageError && <p className="text-red-400 text-sm text-center">{pageError}</p>}
+        {pageError && <p className="text-red-600 text-sm text-center">{pageError}</p>}
 
         {pageSuccess && (
-          <p className="text-green-300 text-sm text-center">{pageSuccess}</p>
+          <p className="text-[#25601d] text-sm text-center font-semibold">
+            {pageSuccess}
+          </p>
         )}
 
         <div className="space-y-3">
           <Button
             type="submit"
-            className="w-full py-2 text-white font-semibold rounded-lg"
-            style={{ background: "linear-gradient(to right, #1F52FF, #C263FF)" }}
+            className={[
+              "w-full py-2 font-semibold rounded-lg",
+              "text-white",
+              "bg-gradient-to-r from-[#25601d] to-[#2fa146]",
+              "hover:opacity-95",
+              "shadow-[0_10px_24px_rgba(47,161,70,0.22)]",
+            ].join(" ")}
             disabled={loading || !canSubmit}
           >
             {loading ? "Atualizando..." : "Atualizar senha"}
@@ -226,7 +252,7 @@ export default function ForceChangePasswordPage() {
           <Button
             type="button"
             variant="secondary"
-            className="w-full bg-[#2a2a3d] hover:bg-[#34344a] text-white border border-gray-600"
+            className="w-full bg-white/70 hover:bg-white text-[#0b2b14] border border-[#cfe8d8]"
             disabled={loading}
             onClick={async () => {
               await logout({ redirectTo: "/login", reload: false });
@@ -236,8 +262,9 @@ export default function ForceChangePasswordPage() {
           </Button>
         </div>
 
-        <div className="text-xs text-center text-gray-400 leading-relaxed">
-          Dica: use uma senha forte com letras maiúsculas, minúsculas, números e símbolos.
+        <div className="text-xs text-center text-[#2f4f38]/70 leading-relaxed">
+          Dica: use uma senha forte com letras maiúsculas, minúsculas, números e
+          símbolos.
         </div>
       </form>
     </div>

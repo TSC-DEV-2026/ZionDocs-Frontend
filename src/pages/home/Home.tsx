@@ -14,6 +14,7 @@ import api from "@/utils/axiosInstance";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
+import { useTheme } from "@/components/ui/useTheme";
 
 interface Documento {
   id: number;
@@ -25,7 +26,14 @@ interface TemplateGED {
 }
 
 const AST_CLIENTES = new Set<string>(["6685", "6862", "6683"]);
-const WECAN_CLIENTES = new Set<string>(["14002", "14003", "5238", "123", "6852", "6689"]);
+const WECAN_CLIENTES = new Set<string>([
+  "14002",
+  "14003",
+  "5238",
+  "123",
+  "6852",
+  "6689",
+]);
 
 function getClienteCode(user: any): string | null {
   const direct = user?.cliente;
@@ -34,7 +42,11 @@ function getClienteCode(user: any): string | null {
   }
 
   const fromDados = user?.dados?.[0]?.id;
-  if (fromDados !== undefined && fromDados !== null && String(fromDados).trim() !== "") {
+  if (
+    fromDados !== undefined &&
+    fromDados !== null &&
+    String(fromDados).trim() !== ""
+  ) {
     return String(fromDados).trim();
   }
 
@@ -51,11 +63,6 @@ function getClientLogo(user: any): { src: string; alt: string } | null {
   return null;
 }
 
-/**
- * ✅ Mantém a imagem como está e adiciona texto no canto direito (como no exemplo)
- * - Card: logo à esquerda, texto à direita
- * - Sem mexer na forma que a imagem é renderizada (object-contain + p-3)
- */
 function ClientLogoAboveDocs({ src, alt }: { src: string; alt: string }) {
   const isWecan = alt === "WE CAN";
 
@@ -73,8 +80,8 @@ function ClientLogoAboveDocs({ src, alt }: { src: string; alt: string }) {
           className={[
             "overflow-hidden rounded-lg",
             "bg-white/10 backdrop-blur-sm",
-            "ring-1 ring-white/15",
-            "shadow-[0_12px_30px_rgba(0,0,0,0.22)]",
+            "ring-1 ring-[#77b66c]/20",
+            "shadow-[0_12px_30px_rgba(0,0,0,0.30)]",
             "flex items-center justify-between",
             "px-4",
             cardSize,
@@ -82,7 +89,6 @@ function ClientLogoAboveDocs({ src, alt }: { src: string; alt: string }) {
           title={alt}
           aria-label={`Cliente ${alt}`}
         >
-          {/* ✅ imagem como está hoje */}
           <div className="h-full flex items-center justify-center shrink-0">
             <img
               src={src}
@@ -94,7 +100,6 @@ function ClientLogoAboveDocs({ src, alt }: { src: string; alt: string }) {
             />
           </div>
 
-          {/* ✅ texto no canto direito */}
           <div className="flex flex-col items-end justify-center text-right pr-2 leading-tight">
             <div className="text-white font-extrabold tracking-wide text-lg sm:text-xl">
               {title}
@@ -116,6 +121,7 @@ export default function Home() {
 
   const navigate = useNavigate();
   const { user, isAuthenticated, isLoading: userLoading } = useUser();
+  const { theme } = useTheme();
 
   useEffect(() => {
     document.title = "Portal do funcionário";
@@ -130,21 +136,30 @@ export default function Home() {
 
     (async () => {
       try {
-        const shouldFetchTemplates = (Cookies.get("is_sapore") || "").toLowerCase() === "true";
+        const shouldFetchTemplates =
+          (Cookies.get("is_sapore") || "").toLowerCase() === "true";
 
         if (shouldFetchTemplates) {
           const [resDocs, resTemplates] = await Promise.all([
             api.get<Documento[]>("/documents", { signal: controller.signal }),
-            api.get<TemplateGED[]>("/searchdocuments/templates", { signal: controller.signal }),
+            api.get<TemplateGED[]>("/searchdocuments/templates", {
+              signal: controller.signal,
+            }),
           ]);
 
-          const docsSorted = [...resDocs.data].sort((a, b) => a.nome.localeCompare(b.nome));
+          const docsSorted = [...resDocs.data].sort((a, b) =>
+            a.nome.localeCompare(b.nome),
+          );
           setDocumentos(docsSorted);
           setTemplates(resTemplates.data);
         } else {
-          const resDocs = await api.get<Documento[]>("/documents", { signal: controller.signal });
+          const resDocs = await api.get<Documento[]>("/documents", {
+            signal: controller.signal,
+          });
 
-          const docsSorted = [...resDocs.data].sort((a, b) => a.nome.localeCompare(b.nome));
+          const docsSorted = [...resDocs.data].sort((a, b) =>
+            a.nome.localeCompare(b.nome),
+          );
           setDocumentos(docsSorted);
           setTemplates([]);
         }
@@ -159,7 +174,8 @@ export default function Home() {
           return;
         }
         toast.error("Falha ao carregar opções", {
-          description: "Não foi possível carregar a lista de documentos. Tente novamente.",
+          description:
+            "Não foi possível carregar a lista de documentos. Tente novamente.",
         });
         console.warn("Erro ao carregar documentos:", error);
       }
@@ -169,10 +185,14 @@ export default function Home() {
   }, [isAuthenticated, userLoading]);
 
   const DEFAULT_TEMPLATE_ID = "3";
-  const DOC_TEMPLATE_RULES: Array<{ match: (n: string) => boolean; id: string }> = [
-    { match: (n) => /recibo\s*va|vale\s*alimenta(ç|c)[aã]o/i.test(n ?? ""), id: "3" },
-    { match: (n) => /trtc|trct|informe\s*rendimento/i.test(n ?? ""), id: "6" },
-  ];
+  const DOC_TEMPLATE_RULES: Array<{ match: (n: string) => boolean; id: string }> =
+    [
+      {
+        match: (n) => /recibo\s*va|vale\s*alimenta(ç|c)[aã]o/i.test(n ?? ""),
+        id: "3",
+      },
+      { match: (n) => /trtc|trct|informe\s*rendimento/i.test(n ?? ""), id: "6" },
+    ];
 
   const getTemplateId = (nomeDocumento: string): string => {
     const rule = DOC_TEMPLATE_RULES.find((r) => r.match(nomeDocumento));
@@ -182,7 +202,11 @@ export default function Home() {
   const getDocumentType = (nomeDocumento: string): string => {
     const nomeLower = (nomeDocumento || "").toLowerCase();
 
-    if (nomeLower.includes("holerite") || nomeLower.includes("folha") || nomeLower.includes("pagamento")) {
+    if (
+      nomeLower.includes("holerite") ||
+      nomeLower.includes("folha") ||
+      nomeLower.includes("pagamento")
+    ) {
       return "holerite";
     }
 
@@ -190,7 +214,11 @@ export default function Home() {
       return "beneficios";
     }
 
-    if (nomeLower.includes("trtc") || nomeLower.includes("trct") || nomeLower.includes("informe rendimento")) {
+    if (
+      nomeLower.includes("trtc") ||
+      nomeLower.includes("trct") ||
+      nomeLower.includes("informe rendimento")
+    ) {
       return "trct";
     }
 
@@ -201,8 +229,10 @@ export default function Home() {
     const total = documentos.length;
     if (total <= 2) return "grid-cols-1 sm:grid-cols-2";
     if (total === 3) return "grid-cols-1 sm:grid-cols-3";
-    if (total === 4) return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4";
-    if (total === 5) return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4";
+    if (total === 4)
+      return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4";
+    if (total === 5)
+      return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4";
     return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4";
   }, [documentos]);
 
@@ -214,41 +244,90 @@ export default function Home() {
   if (userLoading) return <LoadingScreen />;
   if (isAuthenticated && !listsLoaded) return <LoadingScreen />;
 
+  // ✅ Fundo agora respeita o tema (não “força” claro)
+  const isDark = theme === "dark";
+
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden">
       <Header />
 
-      <div className="fixed inset-0 bg-gradient-to-br from-indigo-500 via-purple-600 to-green-300 z-0" />
+      {/* BACKGROUND */}
+      {isDark ? (
+        <>
+          <div className="fixed inset-0 z-0 bg-[#07160f]" />
+          <div className="fixed inset-0 z-0 bg-[radial-gradient(1200px_600px_at_50%_0%,rgba(34,197,94,0.16),rgba(7,22,15,0))]" />
+          <div className="fixed inset-0 z-0 bg-[radial-gradient(900px_500px_at_85%_20%,rgba(21,128,61,0.12),rgba(7,22,15,0))]" />
+        </>
+      ) : (
+        <>
+          <div className="fixed inset-0 z-0 bg-[#eaf6ee]" />
+          <div className="fixed inset-0 z-0 bg-[radial-gradient(1200px_600px_at_50%_0%,rgba(34,197,94,0.22),rgba(234,246,238,0))]" />
+          <div className="fixed inset-0 z-0 bg-[radial-gradient(900px_500px_at_85%_20%,rgba(21,128,61,0.16),rgba(234,246,238,0))]" />
+        </>
+      )}
 
       <main className="relative z-10 flex flex-col items-center flex-grow w-full pt-24">
         {isAuthenticated ? (
           <>
-            {clientLogo ? <ClientLogoAboveDocs src={clientLogo.src} alt={clientLogo.alt} /> : null}
+            {clientLogo ? (
+              <ClientLogoAboveDocs src={clientLogo.src} alt={clientLogo.alt} />
+            ) : null}
 
-            <div className={`grid justify-center items-center gap-6 w-full max-w-6xl mx-auto px-4 pb-10 ${gridCols}`}>
+            <div
+              className={`grid justify-center items-center gap-6 w-full max-w-6xl mx-auto px-4 pb-10 ${gridCols}`}
+            >
               {documentos.map(({ id, nome }) => {
                 const documentType = getDocumentType(nome);
                 const templateId = getTemplateId(nome);
 
                 const handleClick = () => {
-                  if (documentType === "holerite") navigate("/documentos?tipo=holerite");
-                  else if (documentType === "beneficios") navigate("/documentos?tipo=beneficios");
+                  if (documentType === "holerite")
+                    navigate("/documentos?tipo=holerite");
+                  else if (documentType === "beneficios")
+                    navigate("/documentos?tipo=beneficios");
                   else if (documentType === "trct") {
-                    navigate(`/documentos?tipo=trct&template=${templateId}&documento=${encodeURIComponent(nome)}`);
+                    navigate(
+                      `/documentos?tipo=trct&template=${templateId}&documento=${encodeURIComponent(
+                        nome,
+                      )}`,
+                    );
                   } else {
-                    navigate(`/documentos?tipo=generico&template=${templateId}&documento=${encodeURIComponent(nome)}`);
+                    navigate(
+                      `/documentos?tipo=generico&template=${templateId}&documento=${encodeURIComponent(
+                        nome,
+                      )}`,
+                    );
                   }
                 };
+
+                // ✅ Cards variam levemente no dark (pra não “morrer” no fundo)
+                const cardClasses = isDark
+                  ? [
+                      "bg-gradient-to-b from-[#0e3a26] via-[#0a2d1d] to-[#061a11]",
+                      "text-[#f3f3f3] rounded-lg cursor-pointer transition-all",
+                      "border border-[#77b66c]/40",
+                      "hover:shadow-[0_18px_40px_rgba(0,0,0,0.55)] hover:translate-x-1",
+                      "hover:border-[#b7f3c4]/55",
+                    ].join(" ")
+                  : [
+                      "bg-gradient-to-b from-[#0f4a2d] via-[#0b3a24] to-[#072517]",
+                      "text-[#f3f3f3] rounded-lg cursor-pointer transition-all",
+                      "border border-[#77b66c]/55",
+                      "hover:shadow-[0_18px_40px_rgba(0,0,0,0.35)] hover:translate-x-1",
+                      "hover:border-[#b7f3c4]/70",
+                    ].join(" ");
 
                 return (
                   <div
                     key={id}
-                    className="bg-[#1e1e2f] text-white rounded-lg cursor-pointer hover:shadow-xl transition-all hover:translate-x-1"
+                    className={cardClasses}
                     onClick={handleClick}
                   >
                     <div className="flex flex-col items-center justify-center p-6">
-                      <FileText size={40} className="mb-2" />
-                      <h3 className="text-lg font-semibold text-center">{nome}</h3>
+                      <FileText size={40} className="mb-2 text-[#eaffef]" />
+                      <h3 className="text-lg font-semibold text-center text-[#f6fff8]">
+                        {nome}
+                      </h3>
                     </div>
                   </div>
                 );
@@ -257,16 +336,31 @@ export default function Home() {
           </>
         ) : (
           <div className="p-4 w-full">
-            <div className="bg-[#1e1e2f] text-white rounded-xl shadow-2xl w-full max-w-4xl p-6 mx-auto">
+            <div
+              className={[
+                "bg-gradient-to-r from-[#25601d] to-[#2fa146]",
+                "text-[#f3f3f3] rounded-xl",
+                "shadow-[0_20px_60px_rgba(0,0,0,0.40)]",
+                "w-full max-w-4xl p-6 mx-auto",
+                "border border-[#2db750]",
+              ].join(" ")}
+            >
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-4 text-center sm:text-left">
-                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white flex-shrink-0">
-                  <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
+                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-[#eaffef] flex-shrink-0">
+                  <img
+                    src={avatar}
+                    alt="Avatar"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div>
-                  <h1 className="text-lg font-bold">SEJA BEM-VINDO ao SuperRH</h1>
-                  <p className="text-sm text-gray-300">
-                    O SuperRH é um novo meio de comunicação entre você e o RH da empresa. Consulte seus documentos, converse
-                    com o RH e muito mais.
+                  <h1 className="text-lg font-bold">
+                    SEJA BEM-VINDO ao SuperRH
+                  </h1>
+                  <p className="text-sm text-[#eaffef]/90">
+                    O SuperRH é um novo meio de comunicação entre você e o RH da
+                    empresa. Consulte seus documentos, converse com o RH e muito
+                    mais.
                   </p>
                 </div>
               </div>

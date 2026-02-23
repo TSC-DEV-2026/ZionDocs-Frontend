@@ -170,27 +170,42 @@ export default function TokenPage() {
   };
 
   return (
-    <div className="h-screen w-screen relative overflow-hidden flex items-center justify-center p-4 bg-[#0f172a] bg-gradient-to-br from-indigo-500 via-purple-600 to-green-300">
-      <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-[#1F52FF] via-[#7048e8] to-[#C263FF] opacity-30 blur-3xl -z-10" />
+    <div className="min-h-screen w-screen relative isolate overflow-hidden flex items-center justify-center p-4">
+      {/* FUNDO (igual Login) */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#44F01F] via-[#2ECC4A] to-[#2B8B49]" />
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-[#1e1e2f] text-white rounded-2xl shadow-[0_0_120px_rgba(0,0,0,0.6)] p-8 w-full max-w-sm space-y-6 border border-gray-700"
+        className={[
+          "relative z-10",
+          "w-full max-w-sm space-y-6 p-8 rounded-2xl",
+          "bg-white/85 backdrop-blur-md",
+          "shadow-[0_22px_70px_rgba(0,0,0,0.20)]",
+          "border border-[#d8efe0]",
+        ].join(" ")}
       >
-        <h2 className="text-2xl font-bold text-center text-white">
-          Validação de Token
-        </h2>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-extrabold text-center text-[#0b2b14]">
+            Validação de Token
+          </h2>
+          <div className="h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#25601d] to-[#2fa146]" />
+        </div>
 
         {step === "send" && (
           <>
-            <p className="text-sm text-gray-300 text-center">
+            <p className="text-sm text-[#0b2b14] text-center">
               Clique para enviar um token ao seu e-mail e continuar.
             </p>
 
             <Button
               type="button"
-              className="w-full py-2 text-white font-semibold rounded-lg"
-              style={{ background: "linear-gradient(to right, #1F52FF, #C263FF)" }}
+              className={[
+                "w-full py-2 font-semibold rounded-lg",
+                "text-white",
+                "bg-gradient-to-r from-[#25601d] to-[#2fa146]",
+                "hover:opacity-95",
+                "shadow-[0_10px_24px_rgba(47,161,70,0.22)]",
+              ].join(" ")}
               disabled={!canSend}
               onClick={sendToken}
             >
@@ -198,7 +213,7 @@ export default function TokenPage() {
             </Button>
 
             {sendMsg && (
-              <div className="text-sm text-blue-200 bg-blue-900/20 border border-blue-700 rounded-lg p-3">
+              <div className="text-sm text-[#0b2b14] bg-[#e9f8ef] border border-[#bfead0] rounded-lg p-3">
                 {sendMsg}
               </div>
             )}
@@ -207,18 +222,18 @@ export default function TokenPage() {
 
         {step === "validate" && (
           <>
-            <p className="text-sm text-gray-300 text-center">
+            <p className="text-sm text-[#0b2b14] text-center">
               Digite o token enviado para seu e-mail.
             </p>
 
             {sendMsg && (
-              <div className="text-sm text-blue-200 bg-blue-900/20 border border-blue-700 rounded-lg p-3">
+              <div className="text-sm text-[#0b2b14] bg-[#e9f8ef] border border-[#bfead0] rounded-lg p-3">
                 {sendMsg}
               </div>
             )}
 
             <div>
-              <Label htmlFor="token" className="text-gray-200">
+              <Label htmlFor="token" className="text-[#0b2b14]">
                 Token de Acesso
               </Label>
 
@@ -228,11 +243,17 @@ export default function TokenPage() {
                   type={showToken ? "text" : "password"}
                   {...register("token")}
                   placeholder="Digite seu token"
-                  className="mt-1 pr-10 bg-[#2a2a3d] text-white placeholder:text-gray-500"
+                  className={[
+                    "mt-1 pr-10",
+                    "bg-white",
+                    "border-[#cfe8d8] focus-visible:ring-0",
+                    "focus:border-[#2fa146]",
+                    "text-[#0b2b14] placeholder:text-[#2f4f38]/60",
+                  ].join(" ")}
                   autoComplete="off"
                 />
                 <div
-                  className="absolute right-2 top-2 text-white cursor-pointer hover:text-blue-400"
+                  className="absolute right-2 top-2 text-[#2f4f38] cursor-pointer hover:text-[#25601d]"
                   onClick={() => setShowToken((prev) => !prev)}
                   role="button"
                   aria-label="Alternar visualização do token"
@@ -243,17 +264,20 @@ export default function TokenPage() {
               </div>
 
               {errors.token && (
-                <p className="text-red-400 text-sm mt-1">
-                  {errors.token.message}
-                </p>
+                <p className="text-red-600 text-sm mt-1">{errors.token.message}</p>
               )}
             </div>
 
             <div className="space-y-3">
               <Button
                 type="submit"
-                className="w-full py-2 text-white font-semibold rounded-lg"
-                style={{ background: "linear-gradient(to right, #1F52FF, #C263FF)" }}
+                className={[
+                  "w-full py-2 font-semibold rounded-lg",
+                  "text-white",
+                  "bg-gradient-to-r from-[#25601d] to-[#2fa146]",
+                  "hover:opacity-95",
+                  "shadow-[0_10px_24px_rgba(47,161,70,0.22)]",
+                ].join(" ")}
                 disabled={validating}
               >
                 {validating ? "Validando..." : "Validar Token"}
@@ -267,7 +291,7 @@ export default function TokenPage() {
                   className={[
                     "text-sm underline underline-offset-4",
                     canResend
-                      ? "text-blue-300 hover:text-blue-200"
+                      ? "text-[#25601d] hover:text-[#2fa146]"
                       : "text-gray-500 cursor-not-allowed",
                   ].join(" ")}
                 >
@@ -278,7 +302,7 @@ export default function TokenPage() {
                     : "Reenviar token"}
                 </button>
 
-                <div className="text-xs text-gray-400 mt-2">
+                <div className="text-xs text-[#2f4f38]/70 mt-2">
                   Ao reenviar, o token anterior pode ser invalidado. Use sempre o último e-mail.
                 </div>
               </div>
@@ -287,7 +311,7 @@ export default function TokenPage() {
         )}
 
         {tokenError && (
-          <p className="text-red-400 text-sm text-center">{tokenError}</p>
+          <p className="text-red-600 text-sm text-center">{tokenError}</p>
         )}
       </form>
     </div>

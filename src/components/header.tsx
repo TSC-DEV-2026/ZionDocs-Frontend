@@ -16,28 +16,40 @@ import {
 import { BiLogOut } from "react-icons/bi";
 import { IoPersonCircle } from "react-icons/io5";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { HiMail, HiHome } from "react-icons/hi";
+import { HiHome } from "react-icons/hi";
+import { Moon, Sun } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
+import { useTheme } from "@/components/ui/useTheme";
 
 export default function Header() {
   const { user, isAuthenticated, isLoading, logout } = useUser();
   const navigate = useNavigate();
+  const { theme, toggle } = useTheme();
+
+  const isDark = theme === "dark";
 
   const handleLogout = async () => {
     await logout();
-    navigate("/"); // volta pra home pública
+    navigate("/");
   };
 
   const handleGoToLogin = () => {
-    // HashRouter precisa SEMPRE navegar pelo router (sem window.location)
     navigate("/login", { replace: false });
   };
 
+  // ✅ Header continua verde nos dois temas (só muda contraste/sombra/borda)
+  const headerClass = [
+    "fixed top-0 w-full text-white z-50",
+    "bg-gradient-to-r from-[#308425] to-[#2fa146]",
+    isDark ? "shadow-[0_18px_45px_rgba(0,0,0,0.55)]" : "shadow-xl",
+    isDark ? "border-b border-white/10" : "border-b border-transparent",
+  ].join(" ");
+
   if (isLoading) {
     return (
-      <header className="fixed top-0 w-full bg-gradient-to-r from-blue-800 to-blue-400 text-white shadow-md z-50">
+      <header className={headerClass}>
         <div className="container mx-auto flex items-center justify-between pt-4 pb-4 pl-1">
-          <span className="bg-white ml-4 text-blue-600 px-2 py-1 rounded">
+          <span className="bg-white ml-4 text-[#0b2b14] px-2 py-1 rounded">
             SuperRH
           </span>
           <div className="flex items-center gap-4 mr-4">
@@ -49,32 +61,30 @@ export default function Header() {
   }
 
   return (
-    <header className="fixed top-0 w-full bg-gradient-to-r from-blue-800 to-blue-400 text-white shadow-md z-50">
+    <header className={headerClass}>
       <div className="container mx-auto flex items-center justify-between pt-4 pb-4 pl-1">
         <Link
           to="/"
           className="ml-4 inline-flex items-center focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
           aria-label="Ir para início"
         >
-          <span className="bg-white text-blue-600 px-3 py-1 rounded font-bold text-xl whitespace-nowrap">
+          <span className="bg-white text-[#0b2b14] px-3 py-1 rounded font-bold text-xl whitespace-nowrap">
             SuperRH
           </span>
         </Link>
 
-        {/* NAV DESKTOP */}
         <nav className="hidden md:flex space-x-4">
           <Link
             to="/"
-            className="flex items-center hover:text-[#31d5db] transition-colors text-cyan-50 ml-10"
+            className="flex items-center hover:text-white transition-colors text-white ml-10"
           >
             <HiHome className="mr-1" /> Início
           </Link>
 
-          {/* ChatRH só para RH === true */}
           {isAuthenticated && user?.rh === true && (
             <Link
               to="/chat"
-              className="flex items-center hover:text-[#31d5db] transition-colors text-cyan-50"
+              className="flex items-center hover:text-white transition-colors text-white/90"
               title="Console de Atendimento RH"
             >
               ChatRH
@@ -82,23 +92,43 @@ export default function Header() {
           )}
         </nav>
 
-        {/* ÁREA DIREITA DESKTOP */}
         <div className="hidden md:flex items-center">
           {isAuthenticated ? (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild className="hover:cursor-pointer ">
+              <DropdownMenuTrigger asChild className="hover:cursor-pointer">
                 <Button
                   variant="default"
-                  className="flex items-center bg-transparent hover:bg-blue-700 mr-8"
+                  className="flex items-center bg-transparent hover:bg-white/15 mr-8 text-white"
                 >
-                  <IoPersonCircle className="!w-8 !h-8" />
+                  <IoPersonCircle className="!w-8 !h-8 text-white" />
                   <span>{user?.nome || "Usuário"}</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56 bg-white border border-blue-100 hover:cursor-pointer ">
+
+              {/* Dropdown NÃO muda com tema: sempre branco */}
+              <DropdownMenuContent className="w-56 bg-white border border-[#bff3d4] text-[#0b2b14] shadow-md">
+                <DropdownMenuItem
+                  onClick={toggle}
+                  className="flex items-center justify-between cursor-pointer hover:bg-gray-100 focus:bg-gray-100"
+                >
+                  <span className="flex items-center gap-2 text-[#0b2b14]">
+                    {/* ✅ pedido: dark = lua, claro = sol */}
+                    {isDark ? (
+                      <Moon className="h-4 w-4 text-[#0b2b14]" />
+                    ) : (
+                      <Sun className="h-4 w-4 text-[#0b2b14]" />
+                    )}
+                    Tema
+                  </span>
+
+                  <span className="text-xs text-gray-500">
+                    {isDark ? "Escuro" : "Claro"}
+                  </span>
+                </DropdownMenuItem>
+
                 <DropdownMenuItem
                   onClick={handleLogout}
-                  className="text-red-600 hover:cursor-pointer hover:bg-gray-200"
+                  className="text-red-600 hover:bg-gray-100 focus:bg-gray-100 focus:text-red-600 cursor-pointer"
                 >
                   <BiLogOut className="mr-2" /> Sair
                 </DropdownMenuItem>
@@ -107,43 +137,53 @@ export default function Header() {
           ) : (
             <Button
               onClick={handleGoToLogin}
-              className="bg-white text-blue-600 hover:bg-blue-50 mr-4"
+              className="bg-white text-[#0b2b14] hover:bg-white/90 mr-4"
             >
               Entrar
             </Button>
           )}
         </div>
 
-        {/* NAV MOBILE (SHEET) */}
         <Sheet>
           <SheetTrigger asChild className="md:hidden mr-2">
-            <Button variant="default" size="icon">
+            <Button
+              variant="default"
+              size="icon"
+              className="bg-white/20 hover:bg-white/30 border border-white/25"
+            >
               <RxHamburgerMenu className="!h-6 !w-6 text-white" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="bg-blue-800 text-white">
+
+          {/* Sheet também fica verde nos dois temas */}
+          <SheetContent
+            side="right"
+            className={[
+              "text-white",
+              "bg-gradient-to-b from-[#25601d] to-[#2fa146]",
+              "border-l border-white/15",
+            ].join(" ")}
+          >
             <SheetHeader>
               <SheetTitle className="text-left text-white">Menu</SheetTitle>
             </SheetHeader>
 
             <div className="mt-6 space-y-4">
               {isAuthenticated && (
-                <div className="flex flex-col items-center text-center p-4 bg-blue-700 rounded-lg space-y-1">
-                  <IoPersonCircle className="text-4xl mb-1" />
+                <div className="flex flex-col items-center text-center p-4 bg-white/12 rounded-lg space-y-1 border border-white/15">
+                  <IoPersonCircle className="text-4xl mb-1 text-white" />
                   <div className="max-w-full break-words">
                     <p className="font-semibold text-white text-sm">
                       {user?.nome}
                     </p>
-                    <p className="text-xs text-blue-200 truncate">
-                      {user?.email}
-                    </p>
+                    <p className="text-xs text-white/80 truncate">{user?.email}</p>
                   </div>
                 </div>
               )}
 
               <Link
                 to="/"
-                className="flex items-center p-2 hover:text-[#31d5db] rounded-lg text-white"
+                className="flex items-center p-2 rounded-lg text-white hover:bg-white/10 hover:text-white transition-colors border border-transparent hover:border-white/15"
               >
                 <HiHome className="mr-2" /> Início
               </Link>
@@ -151,31 +191,43 @@ export default function Header() {
               {isAuthenticated && user?.rh === true && (
                 <Link
                   to="/chat"
-                  className="flex items-center p-2 rounded-lg text-white hover:text-[#31d5db]"
+                  className="flex items-center p-2 rounded-lg text-white hover:bg-white/10 hover:text-white transition-colors border border-transparent hover:border-white/15"
                   title="Console de Atendimento RH"
                 >
                   ChatRH
                 </Link>
               )}
 
-              <Link
-                to="/contato"
-                className="flex items-center p-2 rounded-lg text-white hover:text-[#31d5db]"
+              {/* ✅ Aqui o ícone tem que ser branco (pq fundo é verde) */}
+              <button
+                type="button"
+                onClick={toggle}
+                className="w-full flex items-center justify-between p-2 rounded-lg text-white transition-colors border border-transparent hover:bg-white/10 hover:border-white/15"
               >
-                <HiMail className="mr-2" /> Contato
-              </Link>
+                <span className="flex items-center gap-2">
+                  {isDark ? (
+                    <Moon className="h-4 w-4 text-white" />
+                  ) : (
+                    <Sun className="h-4 w-4 text-white" />
+                  )}
+                  Tema
+                </span>
+                <span className="text-xs text-white/80">
+                  {isDark ? "Escuro" : "Claro"}
+                </span>
+              </button>
 
               {isAuthenticated ? (
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center p-2 text-red-300 rounded-lg"
+                  className="w-full flex items-center p-2 rounded-lg text-red-500 hover:bg-white/90 bg-white border border-transparent hover:border-white/15 transition-colors"
                 >
                   <BiLogOut className="mr-2" /> Sair
                 </button>
               ) : (
                 <button
                   onClick={handleGoToLogin}
-                  className="w-full flex items-center justify-center p-2 bg-white text-blue-600 rounded-lg hover:bg-blue-100"
+                  className="w-full flex items-center justify-center p-2 bg-white text-[#0b2b14] rounded-lg hover:bg-white/90 transition-colors"
                 >
                   Entrar
                 </button>

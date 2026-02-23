@@ -140,14 +140,9 @@ export default function LoginPage() {
 
       await loginWithRetryOn5xx(data);
 
-      // ✅ determinístico: pega /user/me direto daqui
       const meRes = await api.get("/user/me");
       const me = meRes.data as any;
 
-      console.log("ME no login:", me);
-      console.log("ME.interno:", me?.interno, "ME.senha_trocada:", me?.senha_trocada);
-
-      // mantém o contexto sincronizado (não usamos retorno pra decidir)
       refreshUser().catch(() => {});
 
       if (me?.senha_trocada !== true) {
@@ -175,41 +170,55 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="h-screen w-screen relative overflow-hidden flex items-center justify-center p-4 bg-[#0f172a] bg-gradient-to-br from-indigo-500 via-purple-600 to-green-300">
-      <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-[#1F52FF] via-[#7048e8] to-[#C263FF] opacity-30 blur-3xl -z-10" />
+    <div className="min-h-screen w-screen relative isolate overflow-hidden flex items-center justify-center p-4">
+      {/* FUNDO: sem z-index negativo (fica visível mesmo com body branco) */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#44F01F] via-[#2ECC4A] to-[#2B8B49]" />
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-[#1e1e2f] text-white rounded-2xl shadow-[0_0_120px_rgba(0,0,0,0.6)] p-8 w-full max-w-sm space-y-6 border border-gray-700"
+        className={[
+          "relative z-10", // garante que o form fica acima do fundo
+          "w-full max-w-sm space-y-6 p-8 rounded-2xl",
+          "bg-white/85 backdrop-blur-md",
+          "shadow-[0_22px_70px_rgba(0,0,0,0.20)]",
+          "border border-[#d8efe0]",
+        ].join(" ")}
       >
-        <h2 className="text-2xl font-bold text-center text-white">
-          Acesso ao Sistema
-        </h2>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-extrabold text-center text-[#0b2b14]">
+            Acesso ao Sistema
+          </h2>
+          <div className="h-1 w-24 mx-auto rounded-full bg-gradient-to-r from-[#25601d] to-[#2fa146]" />
+        </div>
 
         {loginSuccess && (
-          <div className="text-sm text-green-200 bg-green-900/20 border border-green-700 rounded-lg p-3">
+          <div className="text-sm text-[#0b2b14] bg-[#e9f8ef] border border-[#bfead0] rounded-lg p-3">
             {loginSuccess}
           </div>
         )}
 
         <div>
-          <Label className="text-gray-200">Usuário</Label>
+          <Label className="text-[#0b2b14]">Usuário</Label>
           <Input
             id="usuario"
             type="text"
             {...register("usuario")}
-            className="mt-1 bg-[#2a2a3d] text-white"
+            className={[
+              "mt-1",
+              "bg-white",
+              "border-[#cfe8d8] focus-visible:ring-0",
+              "focus:border-[#2fa146]",
+              "text-[#0b2b14] placeholder:text-[#2f4f38]/60",
+            ].join(" ")}
             autoComplete="username"
           />
           {errors.usuario && (
-            <p className="text-red-400 text-sm mt-1">
-              {errors.usuario.message}
-            </p>
+            <p className="text-red-600 text-sm mt-1">{errors.usuario.message}</p>
           )}
         </div>
 
         <div>
-          <Label htmlFor="senha" className="text-gray-200">
+          <Label htmlFor="senha" className="text-[#0b2b14]">
             Senha
           </Label>
           <div className="relative">
@@ -217,11 +226,17 @@ export default function LoginPage() {
               id="senha"
               type={showPassword ? "text" : "password"}
               {...register("senha")}
-              className="mt-1 pr-10 bg-[#2a2a3d] text-white"
+              className={[
+                "mt-1 pr-10",
+                "bg-white",
+                "border-[#cfe8d8] focus-visible:ring-0",
+                "focus:border-[#2fa146]",
+                "text-[#0b2b14] placeholder:text-[#2f4f38]/60",
+              ].join(" ")}
               autoComplete="current-password"
             />
             <div
-              className="absolute right-2 top-2 text-white cursor-pointer hover:text-blue-400"
+              className="absolute right-2 top-2 text-[#2f4f38] cursor-pointer hover:text-[#25601d]"
               onClick={() => setShowPassword((prev) => !prev)}
               role="button"
               aria-label="Alternar visualização da senha"
@@ -231,18 +246,23 @@ export default function LoginPage() {
             </div>
           </div>
           {errors.senha && (
-            <p className="text-red-400 text-sm mt-1">{errors.senha.message}</p>
+            <p className="text-red-600 text-sm mt-1">{errors.senha.message}</p>
           )}
         </div>
 
         {loginError && (
-          <p className="text-red-400 text-sm text-center">{loginError}</p>
+          <p className="text-red-600 text-sm text-center">{loginError}</p>
         )}
 
         <Button
           type="submit"
-          className="w-full py-2 text-white font-semibold rounded-lg"
-          style={{ background: "linear-gradient(to right, #1F52FF, #C263FF)" }}
+          className={[
+            "w-full py-2 font-semibold rounded-lg",
+            "text-white",
+            "bg-gradient-to-r from-[#25601d] to-[#2fa146]",
+            "hover:opacity-95",
+            "shadow-[0_10px_24px_rgba(47,161,70,0.22)]",
+          ].join(" ")}
           disabled={loading}
         >
           {loading ? "Entrando..." : "Entrar"}

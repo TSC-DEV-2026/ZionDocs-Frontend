@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import CustomMonthPicker from "@/components/ui/custom-month-picker";
 import api from "@/utils/axiosInstance";
 import Header from "@/components/header";
-import Footer from "@/components/footer";
 import {
   Pagination,
   PaginationContent,
@@ -426,7 +425,7 @@ export default function DocumentList() {
   const [isLoadingCompetenciasGen, setIsLoadingCompetenciasGen] =
     useState(false);
   const [competenciasGen, setCompetenciasGen] = useState<CompetenciaItem[]>([]);
-  0;
+
   const [selectedYearGen, setSelectedYearGen] = useState<number | null>(null);
   const [competenciasGenLoaded, setCompetenciasGenLoaded] = useState(false);
 
@@ -511,7 +510,7 @@ export default function DocumentList() {
 
     const numbers = formattedValue.replace(/\D/g, "");
     if (numbers.length === 11) {
-      setCpfError(validateCPF(formattedValue) ? "" : "CPF inválido");
+      setCpfError(validateCPF(formattedValue) ? "" : "");
     } else {
       setCpfError("");
     }
@@ -1859,16 +1858,34 @@ export default function DocumentList() {
       ? "sm:grid-cols-4"
       : "sm:grid-cols-4";
 
+  const BTN =
+    "border border-border bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-[0_3px_80px_rgba(0,0,0,0.35)] disabled:bg-muted disabled:cursor-not-allowed";
+
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden">
       <Header />
       <Toaster richColors />
 
-      <div className="fixed inset-0 bg-gradient-to-br from-indigo-500 via-purple-600 to-green-300 z-0" />
+      <div className="fixed inset-0 -z-10 pointer-events-none bg-[#eaf6ee] dark:bg-[#07160c]" />
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none
+  bg-[radial-gradient(1200px_600px_at_50%_0%,rgba(34,197,94,0.22),rgba(234,246,238,0))]
+  dark:bg-[radial-gradient(1200px_600px_at_50%_0%,rgba(34,197,94,0.18),rgba(7,22,12,0))]"
+      />
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none
+  bg-[radial-gradient(900px_500px_at_85%_20%,rgba(21,128,61,0.16),rgba(234,246,238,0))]
+  dark:bg-[radial-gradient(900px_500px_at_85%_20%,rgba(21,128,61,0.14),rgba(7,22,12,0))]"
+      />
 
       <main className="relative z-10 flex flex-col flex-grow items-center pt-32 px-4 pb-10">
         {/* card roxo (agora relative para o loader interno) */}
-        <div className="relative w-full max-w-6xl bg-[#1e1e2f] text-white rounded-xl shadow-2xl p-6">
+        <div
+          className="relative w-full max-w-6xl rounded-2xl p-6 backdrop-blur-md
+  bg-background/85 dark:bg-background/75
+  text-foreground border border-border
+  shadow-[0_22px_70px_rgba(0,0,0,0.20)]"
+        >
           {/* loader cobrindo apenas o card */}
           {showCardLoader && (
             <LoadingScreen
@@ -1879,15 +1896,15 @@ export default function DocumentList() {
           )}
 
           <Button
-            variant="default"
+            variant="outline"
             onClick={() => navigate("/")}
-            className="mb-4 text-white hover:text-gray-300"
+            className="mb-4 border-border bg-background/70 text-foreground hover:bg-accent"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
 
-          <h2 className="text-xl font-bold mb-6 text-center">
+          <h2 className="text-xl font-extrabold mb-6 text-center text-foreground">
             {tipoDocumento === "holerite"
               ? "Holerite"
               : tipoDocumento === "beneficios"
@@ -1900,13 +1917,13 @@ export default function DocumentList() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
                 {/* ESQUERDA — EMPRESA */}
-                <section className="bg-[#151527] border border-gray-700 rounded-lg p-4 m-3 h-full flex flex-col">
-                  <h3 className="text-sm font-semibold text-gray-200 mb-3 text-center">
+                <section className="bg-card/70 border border-border text-card-foreground rounded-xl p-4 m-3 h-full flex flex-col shadow-sm">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 text-center">
                     Empresa
                   </h3>
                   {!selectedEmpresaId ? (
                     empresasUnicas.length === 0 ? (
-                      <p className="text-center text-gray-400">
+                      <p className="text-center text-muted-foreground">
                         Nenhuma empresa encontrada.
                       </p>
                     ) : (
@@ -1916,7 +1933,7 @@ export default function DocumentList() {
                             key={e.id}
                             variant="default"
                             title={e.nome}
-                            className="w-full h-11 min-w-0 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                            className="w-full h-11 min-w-0 text-white bg-gradient-to-r from-[#25601d] to-[#2fa146] hover:opacity-95 shadow-[0_10px_24px_rgba(47,161,70,0.18)] disabled:bg-gray-600 disabled:cursor-not-allowed"
                             onClick={() => {
                               setSelectedEmpresaId(e.id);
                               setSelectedEmpresaNome(e.nome);
@@ -1944,15 +1961,15 @@ export default function DocumentList() {
                     )
                   ) : (
                     <div className="space-y-3">
-                      <div className="text-sm text-gray-300 text-center">
+                      <div className="text-sm text-muted-foreground text-center">
                         Selecionada:{" "}
-                        <span className="font-semibold text-white">
+                        <span className="font-semibold text-foreground">
                           {selectedEmpresaNome}
                         </span>
                       </div>
                       <Button
                         variant="default"
-                        className="w-full h-10 border border-gray-600 hover:bg-gray-800 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                        className={`w-full h-10 ${BTN}`}
                         onClick={() => {
                           setSelectedEmpresaId(null);
                           setSelectedEmpresaNome(null);
@@ -1972,8 +1989,8 @@ export default function DocumentList() {
                 </section>
 
                 {/* ====== DIREITA — MATRÍCULA ====== */}
-                <section className="bg-[#151527] border border-gray-700 rounded-lg p-4 m-3 h-full flex flex-col">
-                  <h3 className="text-sm font-semibold text-gray-200 mb-3 text-center">
+                <section className="bg-card/70 border border-border text-card-foreground rounded-xl p-4 m-3 h-full flex flex-col shadow-sm">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 text-center">
                     Matrícula
                   </h3>
 
@@ -1987,7 +2004,7 @@ export default function DocumentList() {
                           <Button
                             key={m}
                             variant="default"
-                            className="w-full h-11 bg-teal-600 hover:bg-teal-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                            className="w-full h-11 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
                             onClick={() => {
                               setSelectedMatricula(m);
                               setCompetenciasHoleriteLoaded(false);
@@ -2000,15 +2017,15 @@ export default function DocumentList() {
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <div className="text-sm text-gray-300 text-center">
+                        <div className="text-sm text-muted-foreground text-center">
                           Selecionada:{" "}
-                          <span className="font-semibold text-white">
+                          <span className="font-semibold text-foreground">
                             {selectedMatricula}
                           </span>
                         </div>
                         <Button
                           variant="default"
-                          className="w-full h-10 border border-gray-600 hover:bg-gray-800 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                          className={`w-full h-10 ${BTN}`}
                           onClick={() => {
                             setSelectedMatricula(null);
                             setCompetencias([]);
@@ -2025,20 +2042,19 @@ export default function DocumentList() {
                       </div>
                     )
                   ) : !selectedEmpresaId ? (
-                    <p className="text-sm text-gray-400 text-center">
+                    <p className="text-sm text-muted-foreground text-center">
                       Selecione uma empresa acima.
                     </p>
                   ) : (
-                    // Só 1 matrícula
                     <div className="space-y-2">
                       <Button
                         variant="default"
                         disabled
-                        className="w-full h-11 bg-teal-600 opacity-70 cursor-not-allowed"
+                        className="w-full h-11 bg-green-600 opacity-70 cursor-not-allowed"
                       >
                         Matrícula {matriculasDaEmpresaSelecionada[0]}
                       </Button>
-                      <p className="text-xs text-center text-gray-400">
+                      <p className="text-xs text-muted-foreground text-center">
                         Selecionada automaticamente (empresa com uma única
                         matrícula).
                       </p>
@@ -2047,25 +2063,25 @@ export default function DocumentList() {
                 </section>
 
                 {/* ANOS & MESES */}
-                <section className="md:col-span-2 bg-[#151527] border border-gray-700 rounded-lg p-4 mb-5 m-3">
-                  <h3 className="text-sm font-semibold text-gray-200 mb-3 text-center">
+                <section className="md:col-span-2 bg-card/70 border border-border text-card-foreground rounded-xl p-4 mb-5 m-3 shadow-sm">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 text-center">
                     Períodos (anos e meses)
                   </h3>
 
                   {!selectedEmpresaId ? (
-                    <p className="text-center text-gray-400">
+                    <p className="text-center text-muted-foreground">
                       Selecione uma empresa para carregar os períodos.
                     </p>
                   ) : requerEscolherMatricula && !selectedMatricula ? (
-                    <p className="text-center text-gray-400">
+                    <p className="text-center text-muted-foreground">
                       Selecione a matrícula para carregar os períodos.
                     </p>
                   ) : isLoadingCompetencias || !competenciasHoleriteLoaded ? (
-                    <p className="text-center">
+                    <p className="text-center text-muted-foreground">
                       Carregando períodos disponíveis...
                     </p>
                   ) : anosDisponiveis.length === 0 ? (
-                    <p className="text-center text-gray-300">
+                    <p className="text-center text-muted-foreground">
                       Nenhum período de holerite encontrado para a seleção
                       atual.
                     </p>
@@ -2075,7 +2091,7 @@ export default function DocumentList() {
                         <Button
                           key={ano}
                           variant="default"
-                          className="w-full h-11 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                          className="w-full h-11 bg-green-600 hover:bg-green-700 hover:shadow-[0_3px_80px_rgba(0,0,0,0.35)] disabled:bg-gray-600 disabled:cursor-not-allowed"
                           onClick={() => setSelectedYear(ano)}
                           disabled={isAnyLoading}
                         >
@@ -2090,7 +2106,7 @@ export default function DocumentList() {
                           <Button
                             key={mm}
                             variant="default"
-                            className="w-full h-11 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                            className="w-full h-11 bg-green-600 hover:bg-green-700 hover:shadow-[0_3px_80px_rgba(0,0,0,0.35)] disabled:bg-gray-600 disabled:cursor-not-allowed"
                             onClick={() =>
                               buscarHoleritePorAnoMes(selectedYear, mm)
                             }
@@ -2103,11 +2119,10 @@ export default function DocumentList() {
                         ))}
                       </div>
 
-                      {/* ✅ BOTÃO SEMPRE VISÍVEL QUANDO ESTIVER NOS MESES */}
                       <div className="flex justify-center mt-2">
                         <Button
                           variant="default"
-                          className="border border-gray-600 hover:bg-gray-800 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                          className="border border-border bg-card/60 text-foreground hover:bg-accent disabled:bg-muted disabled:cursor-not-allowed"
                           onClick={() => {
                             setSelectedYear(null);
                             setDocuments([]);
@@ -2120,10 +2135,9 @@ export default function DocumentList() {
                         </Button>
                       </div>
 
-                      {/* ✅ AQUI: seleção do documento quando vier 2+ holerites */}
                       {holeritesOpcoes.length > 0 && (
-                        <div className="mt-4 border-t border-gray-700 pt-4">
-                          <h4 className="text-sm font-semibold text-gray-200 mb-3 text-center">
+                        <div className="mt-4 border-t border-border pt-4">
+                          <h4 className="text-sm font-semibold text-foreground mb-3 text-center">
                             Selecione o documento
                           </h4>
 
@@ -2134,7 +2148,7 @@ export default function DocumentList() {
                                   h.uuid || `${h.id_documento}-${h.descricao}`
                                 }
                                 variant="default"
-                                className="w-full h-11 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                                className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 hover:shadow-[0_3px_80px_rgba(0,0,0,0.35)] disabled:bg-gray-600 disabled:cursor-not-allowed"
                                 onClick={() => visualizarDocumento(h)}
                                 disabled={isAnyLoading}
                                 title={h.descricao}
@@ -2155,13 +2169,13 @@ export default function DocumentList() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
                 {/* EMPRESA (BEN) */}
-                <section className="bg-[#151527] border border-gray-700 rounded-lg p-4 m-3 h-full flex flex-col">
-                  <h3 className="text-sm font-semibold text-gray-200 mb-3 text-center">
+                <section className="bg-card/70 border border-border text-card-foreground rounded-xl p-4 m-3 h-full flex flex-col shadow-sm">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 text-center">
                     Empresa
                   </h3>
                   {!selectedEmpresaIdGen ? (
                     empresasUnicas.length === 0 ? (
-                      <p className="text-center text-gray-400">
+                      <p className="text-center text-muted-foreground">
                         Nenhuma empresa encontrada.
                       </p>
                     ) : (
@@ -2171,7 +2185,7 @@ export default function DocumentList() {
                             key={e.id}
                             variant="default"
                             title={e.nome}
-                            className="w-full h-11 min-w-0 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                            className="w-full h-11 min-w-0 text-white bg-gradient-to-r from-[#25601d] to-[#2fa146] hover:opacity-95 shadow-[0_10px_24px_rgba(47,161,70,0.18)] disabled:bg-gray-600 disabled:cursor-not-allowed"
                             onClick={() => {
                               setSelectedEmpresaIdGen(e.id);
                               setSelectedEmpresaNomeGen(e.nome);
@@ -2198,15 +2212,15 @@ export default function DocumentList() {
                     )
                   ) : (
                     <div className="space-y-3">
-                      <div className="text-sm text-gray-300 text-center">
+                      <div className="text-sm text-muted-foreground text-center">
                         Selecionada:{" "}
-                        <span className="font-semibold text-white">
+                        <span className="font-semibold text-foreground">
                           {selectedEmpresaNomeGen}
                         </span>
                       </div>
                       <Button
                         variant="default"
-                        className="w-full h-10 border border-gray-600 hover:bg-gray-800 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                        className={`w-full h-10 ${BTN}`}
                         onClick={() => {
                           setSelectedEmpresaIdGen(null);
                           setSelectedEmpresaNomeGen(null);
@@ -2226,8 +2240,8 @@ export default function DocumentList() {
                 </section>
 
                 {/* ====== DIREITA — MATRÍCULA (BEN) ====== */}
-                <section className="bg-[#151527] border border-gray-700 rounded-lg p-4 m-3 h-full flex flex-col">
-                  <h3 className="text-sm font-semibold text-gray-200 mb-3 text-center">
+                <section className="bg-card/70 border border-border text-card-foreground rounded-xl p-4 m-3 h-full flex flex-col shadow-sm">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 text-center">
                     Matrícula
                   </h3>
 
@@ -2241,7 +2255,7 @@ export default function DocumentList() {
                           <Button
                             key={m}
                             variant="default"
-                            className="w-full h-11 bg-teal-600 hover:bg-teal-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                            className="w-full h-11 bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:cursor-not-allowed"
                             onClick={() => {
                               setSelectedMatriculaGen(m);
                               setCompetenciasBen([]);
@@ -2256,15 +2270,15 @@ export default function DocumentList() {
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <div className="text-sm text-gray-300 text-center">
+                        <div className="text-sm text-muted-foreground text-center">
                           Selecionada:{" "}
-                          <span className="font-semibold text-white">
+                          <span className="font-semibold text-foreground">
                             {selectedMatriculaGen}
                           </span>
                         </div>
                         <Button
                           variant="default"
-                          className="w-full h-10 border border-gray-600 hover:bg-gray-800 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                          className={`w-full h-10 ${BTN}`}
                           onClick={() => {
                             setSelectedMatriculaGen(null);
                             setCompetenciasBen([]);
@@ -2280,38 +2294,37 @@ export default function DocumentList() {
                       </div>
                     )
                   ) : selectedEmpresaIdGen ? (
-                    // Só 1 matrícula
                     <div className="space-y-2">
                       <Button
                         variant="default"
                         disabled
-                        className="w-full h-11 bg-teal-600 opacity-70 cursor-not-allowed"
+                        className="w-full h-11 bg-primary text-primary-foreground opacity-70 cursor-not-allowed"
                       >
                         Matrícula {matriculasDaEmpresaSelecionadaGen[0]}
                       </Button>
-                      <p className="text-xs text-center text-gray-400">
+                      <p className="text-xs text-center text-muted-foreground">
                         Selecionada automaticamente (empresa com uma única
                         matrícula).
                       </p>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-400 text-center">
+                    <p className="text-sm text-muted-foreground text-center">
                       Selecione uma empresa acima.
                     </p>
                   )}
                 </section>
 
                 {/* ANOS & MESES (BEN) */}
-                <section className="md:col-span-2 bg-[#151527] border border-gray-700 rounded-lg p-4 mb-5 m-3">
-                  <h3 className="text-sm font-semibold text-gray-200 mb-3 text-center">
+                <section className="md:col-span-2 bg-card/70 border border-border rounded-xl p-4 mb-5 m-3 shadow-sm">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 text-center">
                     Períodos (anos e meses)
                   </h3>
                   {!selectedEmpresaIdGen ? (
-                    <p className="text-center text-gray-400">
+                    <p className="text-center text-muted-foreground">
                       Selecione uma empresa para carregar os períodos.
                     </p>
                   ) : requerEscolherMatriculaGen && !selectedMatriculaGen ? (
-                    <p className="text-center text-gray-400">
+                    <p className="text-center text-muted-foreground">
                       Selecione a matrícula para carregar os períodos.
                     </p>
                   ) : isLoadingCompetenciasBen || !competenciasBenLoaded ? (
@@ -2319,7 +2332,7 @@ export default function DocumentList() {
                       Carregando períodos disponíveis...
                     </p>
                   ) : anosDisponiveisBen.length === 0 ? (
-                    <p className="text-center text-gray-300">
+                    <p className="text-center text-muted-foreground">
                       Nenhum período de benefícios encontrado para a seleção
                       atual.
                     </p>
@@ -2344,7 +2357,7 @@ export default function DocumentList() {
                           <Button
                             key={mm}
                             variant="default"
-                            className="w-full h-11 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                            className="w-full h-11 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
                             onClick={() =>
                               buscarBeneficiosPorAnoMes(selectedYearBen, mm)
                             }
@@ -2359,7 +2372,7 @@ export default function DocumentList() {
                       <div className="flex justify-center">
                         <Button
                           variant="default"
-                          className="border border-gray-600 hover:bg-gray-800 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                          className="border border-border bg-card/60 text-foreground hover:bg-accent disabled:bg-muted disabled:cursor-not-allowed"
                           onClick={() => {
                             setSelectedYearBen(null);
                             setDocuments([]);
@@ -2380,13 +2393,13 @@ export default function DocumentList() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
                 {/* EMPRESA (GEN) */}
-                <section className="bg-[#151527] border border-gray-700 rounded-lg p-4 m-3 h-full flex flex-col">
-                  <h3 className="text-sm font-semibold text-gray-200 mb-3 text-center">
+                <section className="bg-card/70 border border-border text-card-foreground rounded-xl p-4 m-3 h-full flex flex-col shadow-sm">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 text-center">
                     Empresa
                   </h3>
                   {!selectedEmpresaIdGen ? (
                     empresasUnicas.length === 0 ? (
-                      <p className="text-center text-gray-400">
+                      <p className="text-center text-muted-foreground">
                         Nenhuma empresa encontrada.
                       </p>
                     ) : (
@@ -2396,7 +2409,7 @@ export default function DocumentList() {
                             key={e.id}
                             variant="default"
                             title={e.nome}
-                            className="w-full h-11 min-w-0 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                            className="w-full h-11 min-w-0 text-white bg-gradient-to-r from-[#25601d] to-[#2fa146] hover:opacity-95 shadow-[0_10px_24px_rgba(47,161,70,0.18)] disabled:bg-gray-600 disabled:cursor-not-allowed"
                             onClick={() => {
                               setSelectedEmpresaIdGen(e.id);
                               setSelectedEmpresaNomeGen(e.nome);
@@ -2423,15 +2436,15 @@ export default function DocumentList() {
                     )
                   ) : (
                     <div className="space-y-3">
-                      <div className="text-sm text-gray-300 text-center">
+                      <div className="text-sm text-muted-foreground text-center">
                         Selecionada:{" "}
-                        <span className="font-semibold text-white">
+                        <span className="font-semibold text-foreground">
                           {selectedEmpresaNomeGen}
                         </span>
                       </div>
                       <Button
                         variant="default"
-                        className="w-full h-10 border border-gray-600 hover:bg-gray-800 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                        className={`w-full h-10 ${BTN}`}
                         onClick={() => {
                           setSelectedEmpresaIdGen(null);
                           setSelectedEmpresaNomeGen(null);
@@ -2451,8 +2464,8 @@ export default function DocumentList() {
                 </section>
 
                 {/* ====== DIREITA — MATRÍCULA (GEN) ====== */}
-                <section className="bg-[#151527] border border-gray-700 rounded-lg p-4 m-3 h-full flex flex-col">
-                  <h3 className="text-sm font-semibold text-gray-200 mb-3 text-center">
+                <section className="bg-card/70 border border-border text-card-foreground rounded-xl p-4 m-3 h-full flex flex-col shadow-sm">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 text-center">
                     Matrícula
                   </h3>
 
@@ -2466,7 +2479,7 @@ export default function DocumentList() {
                           <Button
                             key={m}
                             variant="default"
-                            className="w-full h-11 bg-teal-600 hover:bg-teal-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                            className="w-full h-11 bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:cursor-not-allowed"
                             onClick={() => {
                               setSelectedMatriculaGen(m);
                               setCompetenciasGen([]);
@@ -2481,15 +2494,15 @@ export default function DocumentList() {
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <div className="text-sm text-gray-300 text-center">
+                        <div className="text-sm text-muted-foreground text-center">
                           Selecionada:{" "}
-                          <span className="font-semibold text-white">
+                          <span className="font-semibold text-foreground">
                             {selectedMatriculaGen}
                           </span>
                         </div>
                         <Button
                           variant="default"
-                          className="w-full h-10 border border-gray-600 hover:bg-gray-800 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                          className={`w-full h-10 ${BTN}`}
                           onClick={() => {
                             setSelectedMatriculaGen(null);
                             setCompetenciasGen([]);
@@ -2505,38 +2518,37 @@ export default function DocumentList() {
                       </div>
                     )
                   ) : selectedEmpresaIdGen ? (
-                    // Só 1 matrícula
                     <div className="space-y-2">
                       <Button
                         variant="default"
                         disabled
-                        className="w-full h-11 bg-teal-600 opacity-70 cursor-not-allowed"
+                        className="w-full h-11 bg-primary text-primary-foreground opacity-70 cursor-not-allowed"
                       >
                         Matrícula {matriculasDaEmpresaSelecionadaGen[0]}
                       </Button>
-                      <p className="text-xs text-center text-gray-400">
+                      <p className="text-xs text-center text-muted-foreground">
                         Selecionada automaticamente (empresa com uma única
                         matrícula).
                       </p>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-400 text-center">
+                    <p className="text-sm text-muted-foreground text-center">
                       Selecione uma empresa acima.
                     </p>
                   )}
                 </section>
 
                 {/* ANOS & MESES (GEN) */}
-                <section className="md:col-span-2 bg-[#151527] border border-gray-700 rounded-lg p-4 mb-5 m-3">
-                  <h3 className="text-sm font-semibold text-gray-200 mb-3 text-center">
+                <section className="md:col-span-2 bg-card/70 border border-border rounded-xl p-4 mb-5 m-3 shadow-sm">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 text-center">
                     Períodos (anos e meses)
                   </h3>
                   {!selectedEmpresaIdGen ? (
-                    <p className="text-center text-gray-400">
+                    <p className="text-center text-muted-foreground">
                       Selecione uma empresa para carregar os períodos.
                     </p>
                   ) : requerEscolherMatriculaGen && !selectedMatriculaGen ? (
-                    <p className="text-center text-gray-400">
+                    <p className="text-center text-muted-foreground">
                       Selecione a matrícula para carregar os períodos.
                     </p>
                   ) : isLoadingCompetenciasGen || !competenciasGenLoaded ? (
@@ -2544,7 +2556,7 @@ export default function DocumentList() {
                       Carregando períodos disponíveis...
                     </p>
                   ) : anosDisponiveisGen.length === 0 ? (
-                    <p className="text-center text-gray-300">
+                    <p className="text-center text-muted-foreground">
                       Nenhum período de {nomeDocumento} encontrado para a
                       seleção atual.
                     </p>
@@ -2585,7 +2597,7 @@ export default function DocumentList() {
                           <Button
                             key={mm}
                             variant="default"
-                            className="w-full h-11 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                            className="w-full h-11 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed"
                             onClick={() =>
                               buscarGenericoPorAnoMes(selectedYearGen, mm)
                             }
@@ -2600,7 +2612,7 @@ export default function DocumentList() {
                       <div className="flex justify-center">
                         <Button
                           variant="default"
-                          className="border border-gray-600 hover:bg-gray-800 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                          className="border border-border bg-card/60 text-foreground hover:bg-accent disabled:bg-muted disabled:cursor-not-allowed"
                           onClick={() => {
                             setSelectedYearGen(null);
                             setDocuments([]);
@@ -2629,9 +2641,9 @@ export default function DocumentList() {
                       type="text"
                       placeholder="CPF"
                       required
-                      className={`bg-[#2c2c40] text-white border p-2 rounded ${
-                        cpfError ? "border-red-500" : "border-gray-600"
-                      } ${isAnyLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                      className={`bg-white/80 text-[#0b2b14] placeholder:text-[#2f4f38]/60 border p-2 rounded
+  ${cpfError ? "border-red-500" : "border-[#cfe8d8]"}
+  ${isAnyLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                       value={cpf}
                       onChange={handleCpfChange}
                       maxLength={14}
@@ -2646,9 +2658,8 @@ export default function DocumentList() {
                   <input
                     type="text"
                     placeholder="Matrícula"
-                    className={`bg-[#2c2c40] text-white border border-gray-600 p-2 rounded ${
-                      isAnyLoading ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
+                    className={`bg-white/80 text-[#0b2b14] placeholder:text-[#2f4f38]/60 border border-[#cfe8d8] p-2 rounded
+  ${isAnyLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                     value={matricula}
                     onChange={(e) => setMatricula(e.target.value)}
                     disabled={isAnyLoading}
@@ -2976,9 +2987,9 @@ export default function DocumentList() {
 
           {/* TABELA: SOMENTE para gestor */}
           {user?.gestor ? (
-            <div className="overflow-x-auto border border-gray-600 rounded">
-              <table className="w-full text-sm text-left text-white">
-                <thead className="bg-[#2c2c40] text-xs uppercase text-gray-300">
+            <div className="overflow-x-auto border border-[#cfe8d8] rounded-xl bg-white/70">
+              <table className="w-full text-sm text-left text-[#0b2b14]">
+                <thead className="bg-[#e9f8ef] text-xs uppercase text-[#2f4f38]/80">
                   <tr>{renderTableHeader()}</tr>
                 </thead>
                 <tbody>
@@ -2991,7 +3002,7 @@ export default function DocumentList() {
                             ? 3
                             : 2
                         }
-                        className="text-center py-4 text-gray-400"
+                        className="text-center py-4 text-[#2f4f38]/60"
                       >
                         Nenhum documento encontrado.
                       </td>
@@ -3000,7 +3011,7 @@ export default function DocumentList() {
                     documentosVisiveis.map((doc) => (
                       <tr
                         key={doc.id_documento}
-                        className="border-t border-gray-700 hover:bg-gray-800 transition-colors"
+                        className="border-t border-[#d8efe0] hover:bg-[#f2fbf5] transition-colors"
                       >
                         {renderDocumentInfo(doc)}
                         <td className="px-4 py-2 text-right">
@@ -3010,7 +3021,7 @@ export default function DocumentList() {
                               isAnyLoading ||
                               loadingPreviewId === doc.id_documento
                             }
-                            className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 text-sm rounded transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="bg-gradient-to-r from-[#25601d] to-[#2fa146] hover:opacity-95 text-white px-3 py-1.5 text-sm rounded transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-60"
                           >
                             {loadingPreviewId === doc.id_documento
                               ? "Abrindo..."
@@ -3074,7 +3085,6 @@ export default function DocumentList() {
           )}
         </div>
       </main>
-      <Footer />
     </div>
   );
 }
