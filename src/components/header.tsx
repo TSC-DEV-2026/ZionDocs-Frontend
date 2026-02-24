@@ -21,6 +21,9 @@ import { Moon, Sun } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { useTheme } from "@/components/ui/useTheme";
 
+// ✅ coloque a sua logo (escudo + texto ZionDocs) aqui
+import logoZionDocs from "@/assets/Logo.png";
+
 export default function Header() {
   const { user, isAuthenticated, isLoading, logout } = useUser();
   const navigate = useNavigate();
@@ -37,7 +40,6 @@ export default function Header() {
     navigate("/login", { replace: false });
   };
 
-  // ✅ Header continua verde nos dois temas (só muda contraste/sombra/borda)
   const headerClass = [
     "fixed top-0 w-full text-white z-50",
     "bg-gradient-to-r from-[#308425] to-[#2fa146]",
@@ -49,9 +51,10 @@ export default function Header() {
     return (
       <header className={headerClass}>
         <div className="container mx-auto flex items-center justify-between pt-4 pb-4 pl-1">
-          <span className="bg-white ml-4 text-[#0b2b14] px-2 py-1 rounded">
-            SuperRH
-          </span>
+          <div className="ml-4 flex items-center">
+            <span className="h-8 w-40 rounded animate-pulse bg-white/30" />
+          </div>
+
           <div className="flex items-center gap-4 mr-4">
             <span className="h-8 w-24 rounded animate-pulse bg-white/30" />
           </div>
@@ -68,9 +71,17 @@ export default function Header() {
           className="ml-4 inline-flex items-center focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
           aria-label="Ir para início"
         >
-          <span className="bg-white text-[#0b2b14] px-3 py-1 rounded font-bold text-xl whitespace-nowrap">
-            SuperRH
-          </span>
+          {/* ✅ Logo ZionDocs (escudo + texto) */}
+          <div className="bg-white/95 rounded px-5 py-1 flex items-center">
+            <img
+              src={logoZionDocs}
+              alt="ZionDocs"
+              className="h-8 w-auto object-contain select-none scale-150 "
+              draggable={false}
+              loading="eager"
+              decoding="async"
+            />
+          </div>
         </Link>
 
         <nav className="hidden md:flex space-x-4">
@@ -105,14 +116,12 @@ export default function Header() {
                 </Button>
               </DropdownMenuTrigger>
 
-              {/* Dropdown NÃO muda com tema: sempre branco */}
               <DropdownMenuContent className="w-56 bg-white border border-[#bff3d4] text-[#0b2b14] shadow-md">
                 <DropdownMenuItem
                   onClick={toggle}
                   className="flex items-center justify-between cursor-pointer hover:bg-gray-100 focus:bg-gray-100"
                 >
                   <span className="flex items-center gap-2 text-[#0b2b14]">
-                    {/* ✅ pedido: dark = lua, claro = sol */}
                     {isDark ? (
                       <Moon className="h-4 w-4 text-[#0b2b14]" />
                     ) : (
@@ -155,7 +164,6 @@ export default function Header() {
             </Button>
           </SheetTrigger>
 
-          {/* Sheet também fica verde nos dois temas */}
           <SheetContent
             side="right"
             className={[
@@ -176,7 +184,9 @@ export default function Header() {
                     <p className="font-semibold text-white text-sm">
                       {user?.nome}
                     </p>
-                    <p className="text-xs text-white/80 truncate">{user?.email}</p>
+                    <p className="text-xs text-white/80 truncate">
+                      {user?.email}
+                    </p>
                   </div>
                 </div>
               )}
@@ -198,7 +208,6 @@ export default function Header() {
                 </Link>
               )}
 
-              {/* ✅ Aqui o ícone tem que ser branco (pq fundo é verde) */}
               <button
                 type="button"
                 onClick={toggle}
