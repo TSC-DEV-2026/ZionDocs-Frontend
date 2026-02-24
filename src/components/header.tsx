@@ -21,7 +21,6 @@ import { Moon, Sun } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { useTheme } from "@/components/ui/useTheme";
 
-// ✅ coloque a sua logo (escudo + texto ZionDocs) aqui
 import logoZionDocs from "@/assets/Logo.png";
 
 export default function Header() {
@@ -71,12 +70,11 @@ export default function Header() {
           className="ml-4 inline-flex items-center focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
           aria-label="Ir para início"
         >
-          {/* ✅ Logo ZionDocs (escudo + texto) */}
           <div className="bg-white/95 rounded px-5 py-1 flex items-center">
             <img
               src={logoZionDocs}
               alt="ZionDocs"
-              className="h-8 w-auto object-contain select-none scale-150 "
+              className="h-8 w-auto object-contain select-none scale-150"
               draggable={false}
               loading="eager"
               decoding="async"
@@ -208,19 +206,28 @@ export default function Header() {
                 </Link>
               )}
 
+              {/* ✅ FIX MOBILE: força estilo e texto aparecer */}
               <button
                 type="button"
                 onClick={toggle}
-                className="w-full flex items-center justify-between p-2 rounded-lg text-white transition-colors border border-transparent hover:bg-white/10 hover:border-white/15"
+                className={[
+                  "w-full flex items-center justify-between p-2 rounded-lg",
+                  "text-white bg-transparent",
+                  "appearance-none",
+                  "border border-white/15",
+                  "hover:bg-white/10 active:bg-white/10",
+                  "focus:outline-none focus:ring-2 focus:ring-white/30",
+                ].join(" ")}
               >
-                <span className="flex items-center gap-2">
+                <span className="flex items-center gap-2 text-white">
                   {isDark ? (
                     <Moon className="h-4 w-4 text-white" />
                   ) : (
                     <Sun className="h-4 w-4 text-white" />
                   )}
-                  Tema
+                  <span className="text-white">Tema</span>
                 </span>
+
                 <span className="text-xs text-white/80">
                   {isDark ? "Escuro" : "Claro"}
                 </span>
